@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
 require "kat"
+
+Kat::CLI.start(ARGV)
