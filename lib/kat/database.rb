@@ -147,6 +147,10 @@ module Kat
     def each_constraint
       @constraints.each {|n,c| yield c}
     end
+
+    def each_constraining_constraint
+      @constraining_constraints.each {|n,c| yield c}
+    end
   end
 
   class Database
