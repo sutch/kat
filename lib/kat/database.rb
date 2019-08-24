@@ -130,10 +130,6 @@ module Kat
       @keys[name]
     end
 
-    def each_key
-      @keys.each {|name, key| yield key}
-    end
-
     def add_constraint(**args)
       if @constraints.find {|c| c.name == args[:name]}
         abort "Adding duplicate constraint name: #{args[:name]} to table: #{@name}"
@@ -154,6 +150,7 @@ module Kat
       constraint
     end
   end
+
 
   class Database
 
