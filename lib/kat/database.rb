@@ -135,12 +135,10 @@ module Kat
     end
 
     def add_constraint(**args)
-      abort "Adding duplicate constraint name: #{args[:name]} to table: #{name}" if @constraints.keys.include?(args[:name])
+      abort "Adding duplicate constraint name: #{args[:name]} to table: #{@name}" if @constraints.keys.include?(args[:name])
       @constraints[args[:name]] = constraint = Constraint.new({table: self}.merge(args))
-      Kat::logger.info("Constraint added to table #{args[:name]}: #{constraint.inspect}")
-      abort "Adding duplicate contraining constraint name: #{args[:name]} to table: #{name}" if constraint.fk_field.table.constraining_constraints.keys.include?(args[:name])
-      constraint.fk_field.table.constraining_constraints[args[:name]] = constraint
-      Kat::logger.info("Constraining constraint added to table #{constraint.fk_field.table.constraining_constraints[args[:name]]}")
+      Kat::logger.info("Constraint added to table #{@name}: #{constraint.inspect}")
+      constraint.fk_field.table.add_constraining_constraint(constraint)
       @database.add_constraint(constraint)
       constraint
     end
@@ -151,6 +149,12 @@ module Kat
 
     def each_constraint
       @constraints.each {|name, constraint| yield constraint}
+    end
+
+    def add_constraining_constraint(constraint)
+      abort "Adding duplicate contraining constraint name: #{constraint.name} to table: #{@name}" if @constraining_constraints.keys.include?(constraint.name)
+      constraining_constraints[constraint.name] = constraint
+      Kat::logger.info("Constraining constraint added to table #{@name} #{constraint.inspect}")
     end
 
     def each_constraining_constraint
