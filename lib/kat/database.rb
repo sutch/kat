@@ -84,9 +84,9 @@ module Kat
     attr_reader :name  # string
     attr_reader :database  # Database object
     attr_reader :constraints  # array of Constraint objects
+    attr_accessor :constraining_constraints  # array of Constraint objects
 
     attr_accessor :primary_key
-    attr_accessor :constraining_constraints
 
     def initialize(name:, database:)
       @name = name
@@ -95,7 +95,7 @@ module Kat
       @primary_key = nil
       @keys = {}
       @constraints = []
-      @constraining_constraints = {}
+      @constraining_constraints = []
     end
 
     def to_s
@@ -145,18 +145,13 @@ module Kat
       constraint
     end
 
-    def each_constraint
-      @constraints.each {|constraint| yield constraint}
-    end
-
     def add_constraining_constraint(constraint)
-      abort "Adding duplicate contraining constraint name: #{constraint.name} to table: #{@name}" if @constraining_constraints.keys.include?(constraint.name)
-      constraining_constraints[constraint.name] = constraint
-      Kat::logger.info("Constraining constraint added to table #{@name} #{constraint.inspect}")
-    end
-
-    def each_constraining_constraint
-      @constraining_constraints.each {|name, constraint| yield constraint}
+      if @constraining_constraints.find {|c| c.name == constraint.name}
+        abort "Adding duplicate contraining constraint name: #{args[:name]} to table: #{@name}"
+      end
+      @constraining_constraints << constraint
+      Kat::logger.info("Constraining constraint added to table #{@name}: #{constraint.inspect}")
+      constraint
     end
   end
 
