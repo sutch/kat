@@ -14,11 +14,11 @@ module Kat
   end
 
   class CLI < Thor
-    class_option :debug_level, :default => "WARN"
+    class_option :log_level, :default => "WARN"
 
     desc "test FILENAME", "Attempt to read and process FILENAME (an SQL file)"
     def read(filename)
-      Kat::logger = Logger.new(STDOUT, level: options[:debug_level])
+      Kat::logger = Logger.new(STDOUT, level: options[:log_level])
       abort "File does not exist: #{filename}" if !File.file?(filename)
       database = File.open(filename, "r") { |f| Kat.process_sql(f, Kat::Database.new(filename)) }
       puts "#{database.tables.count} tables found, #{database.constraints.count} constraints found"
