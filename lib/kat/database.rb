@@ -83,9 +83,9 @@ module Kat
 
     attr_reader :name  # string
     attr_reader :database  # Database object
+    attr_reader :constraints  # array of Constraint objects
 
     attr_accessor :primary_key
-    attr_accessor :constraints
     attr_accessor :constraining_constraints
 
     def initialize(name:, database:)
@@ -94,7 +94,7 @@ module Kat
       @fields = {}
       @primary_key = nil
       @keys = {}
-      @constraints = {}
+      @constraints = []
       @constraining_constraints = {}
     end
 
@@ -135,20 +135,18 @@ module Kat
     end
 
     def add_constraint(**args)
-      abort "Adding duplicate constraint name: #{args[:name]} to table: #{@name}" if @constraints.keys.include?(args[:name])
-      @constraints[args[:name]] = constraint = Constraint.new({table: self}.merge(args))
+      if @constraints.find {|c| c.name == args[:name]}
+        abort "Adding duplicate constraint name: #{args[:name]} to table: #{@name}"
+      end
+      @constraints << constraint = Constraint.new({table: self}.merge(args))
       Kat::logger.info("Constraint added to table #{@name}: #{constraint.inspect}")
       constraint.fk_field.table.add_constraining_constraint(constraint)
       @database.add_constraint(constraint)
       constraint
     end
 
-    def get_constraint_by_name(name)
-      @constraints[name]
-    end
-
     def each_constraint
-      @constraints.each {|name, constraint| yield constraint}
+      @constraints.each {|constraint| yield constraint}
     end
 
     def add_constraining_constraint(constraint)
