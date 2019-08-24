@@ -141,7 +141,7 @@ module Kat
       abort "Adding duplicate contraining constraint name: #{args[:name]} to table: #{name}" if constraint.fk_field.table.constraining_constraints.keys.include?(args[:name])
       constraint.fk_field.table.constraining_constraints[args[:name]] = constraint
       Kat::logger.info("Constraining constraint added to table #{constraint.fk_field.table.constraining_constraints[args[:name]]}")
-      constraint.fk_field.table.database.add_constraint(constraint)
+      @database.add_constraint(constraint)
       constraint
     end
 
