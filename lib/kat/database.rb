@@ -134,8 +134,10 @@ module Kat
     def add_constraint(**args)
       abort "Adding duplicate constraint name: #{args[:name]} to table: #{name}" if @constraints.keys.include?(args[:name])
       @constraints[args[:name]] = constraint = Constraint.new({table: self}.merge(args))
+      Kat::logger.info("Constraint added to table #{args[:name]}: #{constraint.inspect}")
       abort "Adding duplicate contraining constraint name: #{args[:name]} to table: #{name}" if constraint.field.table.constraining_constraints.keys.include?(args[:name])
       constraint.field.table.constraining_constraints[args[:name]] = constraint
+      Kat::logger.info("Constraining constraint added to table #{constraint.field.table.constraining_constraints[args[:name]]}")
       constraint.field.table.database.add_constraint(constraint)
       constraint
     end
@@ -175,6 +177,7 @@ module Kat
     def add_table(name)
       abort "Adding duplicate table name: #{name}" if @tables.keys.include?(name)
       @tables[name] = table = Table.new(name: name, database: self)
+      Kat::logger.info("Created table #{name}")
       table
     end
 
