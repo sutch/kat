@@ -140,7 +140,7 @@ module Kat
       end
       @constraints << constraint = Constraint.new({table: self}.merge(args))
       Kat::logger.info("Constraint added to table #{@name}: #{constraint.inspect}")
-      constraint.fk_field.table.add_constraining_constraint(constraint)
+      constraint.pk_field.table.add_constraining_constraint(constraint)
       @database.add_constraint(constraint)
       constraint
     end
