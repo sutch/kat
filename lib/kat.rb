@@ -41,7 +41,7 @@ module Kat
         end
         if table.constraints.count > 0
           (table.constraints.map {|c| c.fk_field.name}).uniq.sort.each do |fk_field_name|
-            puts "  Constrains from foreign key #{fk_field_name}:"
+            puts "  Constrains by foreign key #{fk_field_name} on:"
             table.constraints.each do |constraint|
               puts "    - #{constraint.pk_field.table.name}(#{constraint.pk_field.name})" if constraint.fk_field.name == fk_field_name
             end
