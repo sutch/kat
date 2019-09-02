@@ -33,12 +33,12 @@ module Kat
 
   class Key
 
-    attr_reader :name  #string
-    attr_reader :fields  # field names (TODO: change to Field objects)
-    attr_reader :unique
+    attr_reader :name  # string
+    attr_reader :fields  # array of Field objects
+    attr_reader :unique  # boolean
     attr_reader :table   # Table object
 
-    def initialize(name:, fields:, unique:, table:)
+    def initialize(name:, fields:, unique: false, table:)
       @name = name
       @fields = fields
       @unique = unique
@@ -94,7 +94,6 @@ module Kat
       @database = database
       @fields = {}
       @primary_key = nil
-      # @keys = {}
       @keys = []
       @constraints = []
       @constraining_constraints = []
@@ -111,6 +110,7 @@ module Kat
     def add_field(**args)
       abort "Adding duplicate field name: #{args[:name]} to table: #{@name}" if @fields.keys.include?(args[:name])
       @fields[args[:name]] = field = Field.new({table: self}.merge(args))
+      Kat::logger.info("Field added to table #{@name}: #{field.inspect}")
       field
     end
 
@@ -122,19 +122,27 @@ module Kat
       @fields.each {|name, field| yield field}
     end
 
-    def add_key(**args)
-      if @keys.find {|c| c.name == args[:name]}
-        abort "Adding duplicate key name: #{args[:name]} to table: #{@name}"
+    def add_key(name:, fields:, **args)
+      if @keys.find {|k| k.name == name}
+        abort "Adding duplicate key name: #{name} to table: #{@name}"
       end
-      @keys << key = Key.new({table: self}.merge(args))
+      fields = fields.map do |name|
+        if !field = self.get_field_by_name(name)
+          abort "Key contains unknown field name: #{name} in table: #{@table}"
+        else
+          field
+        end
+      end
+      @keys << key = Key.new({name: name, fields: fields, table: self}.merge(args))
       Kat::logger.info("Key added to table #{@name}: #{key.inspect}")
       key
     end
 
+    # return a key if that key is composed of only the one field named *name*
     def get_key_by_field_name(name)
       key = nil
       @keys.each do |k|
-        key = k if k.name == name
+        key = k if k.fields.count == 1 && k.fields[0].name == name
       end
       key
     end
