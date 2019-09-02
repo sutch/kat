@@ -47,13 +47,10 @@ module Kat
             end
           end
         end
-        if !table.primary_key.nil?
-          puts "  Primary key: #{table}"
-        end
         if table.keys.count > 0
           puts "  Keys:"
           table.keys.each do |key|
-            puts "    - Fields: #{key.fields.join(", ")}#{(key.unique ? " (UNIQUE)" : "")}"
+            puts "    - Fields: #{key.fields.join(", ")}#{(key.primary_key ? " (PRIMARY KEY)" : (key.unique ? " (UNIQUE)" : ""))}"
           end
         end
       end

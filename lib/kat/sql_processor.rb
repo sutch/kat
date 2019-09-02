@@ -69,7 +69,7 @@ module Kat
         when /^\s*ADD\s+PRIMARY\s+KEY\s+\((?<fields>[^)]+)\)\s*
             (?<line_terminator>[,;])\s*$/x
           state = :read_next_statement if $~[:line_terminator] == ";"
-          table.primary_key = $~[:fields].tr("`", "").split(",")
+          table.add_key(name: "PRIMARY KEY", fields: $~[:fields].tr("`", "").split(","), primary_key: true)
         when /^\s*ADD\s+(?<unique>UNIQUE\s+)?KEY\s+`(?<name>[^`]+)`\s+
             \((?<fields>[^)]+)\)\s*
             (?<line_terminator>[,;])\s*$/x

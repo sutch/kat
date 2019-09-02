@@ -35,13 +35,15 @@ module Kat
 
     attr_reader :name  # string
     attr_reader :fields  # array of Field objects
+    attr_reader :primary_key  # boolean
     attr_reader :unique  # boolean
     attr_reader :table   # Table object
 
-    def initialize(name:, fields:, unique: false, table:)
+    def initialize(name:, fields:, primary_key: false, unique: false, table:)
       @name = name
       @fields = fields
-      @unique = unique
+      @primary_key = primary_key
+      @unique = ( @primary_key ? true : unique )
       @table = table
     end
 
@@ -85,15 +87,12 @@ module Kat
     attr_reader :database  # Database object
     attr_reader :constraints  # array of Constraint objects
     attr_accessor :constraining_constraints  # array of Constraint objects
-
     attr_reader :keys
-    attr_accessor :primary_key
 
     def initialize(name:, database:)
       @name = name
       @database = database
       @fields = {}
-      @primary_key = nil
       @keys = []
       @constraints = []
       @constraining_constraints = []
@@ -143,6 +142,15 @@ module Kat
       key = nil
       @keys.each do |k|
         key = k if k.fields.count == 1 && k.fields[0].name == name
+      end
+      key
+    end
+
+    # return the primary key
+    def primary_key
+      key = nil
+      @keys.each do |k|
+        key = k if k.primary_key
       end
       key
     end
