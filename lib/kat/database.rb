@@ -86,6 +86,7 @@ module Kat
     attr_reader :constraints  # array of Constraint objects
     attr_accessor :constraining_constraints  # array of Constraint objects
 
+    attr_reader :keys
     attr_accessor :primary_key
 
     def initialize(name:, database:)
