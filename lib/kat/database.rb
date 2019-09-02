@@ -94,7 +94,8 @@ module Kat
       @database = database
       @fields = {}
       @primary_key = nil
-      @keys = {}
+      # @keys = {}
+      @keys = []
       @constraints = []
       @constraining_constraints = []
     end
@@ -122,13 +123,20 @@ module Kat
     end
 
     def add_key(**args)
-      abort "Adding duplicate key name: #{args[:name]} to table: #{name}" if @keys.keys.include?(args[:name])
-      @keys[args[:name]] = key = Key.new({table: self}.merge(args))
+      if @keys.find {|c| c.name == args[:name]}
+        abort "Adding duplicate key name: #{args[:name]} to table: #{@name}"
+      end
+      @keys << key = Key.new({table: self}.merge(args))
+      Kat::logger.info("Key added to table #{@name}: #{key.inspect}")
       key
     end
 
-    def get_key_by_name(name)
-      @keys[name]
+    def get_key_by_field_name(name)
+      key = nil
+      @keys.each do |k|
+        key = k if k.name == name
+      end
+      key
     end
 
     def add_constraint(**args)

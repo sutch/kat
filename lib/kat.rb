@@ -52,7 +52,7 @@ module Kat
         end
         if table.keys.count > 0
           puts "  Keys:"
-          table.keys.each do |name, key|
+          table.keys.each do |key|
             puts "    - Fields: #{key.fields.join(", ")}#{(key.unique ? " (UNIQUE)" : "")}"
           end
         end
