@@ -111,6 +111,7 @@ module Kat
     def add_field(**args)
       abort "Adding duplicate field name: #{args[:name]} to table: #{@name}" if @fields.keys.include?(args[:name])
       @fields[args[:name]] = field = Field.new({table: self}.merge(args))
+      Kat::logger.info("Field added to table #{@name}: #{field.inspect}")
       field
     end
 
