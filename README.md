@@ -66,6 +66,10 @@ To see the tables and constraints, use the following command.
 
     $ kat read sample/keycloak-5.0.0-mariadb-phpmyadmin.sql --log_level ERROR
 
+## Limitations
+
+1. The SQL processor does not support constraints containing multiple foreign keys or multiple references. The Keycloak database as of version 5.0.0 does not use such constraints.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -74,7 +78,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kat. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sutch/kat. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
